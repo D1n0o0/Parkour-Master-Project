@@ -166,6 +166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   CharacterSpeed: 5
+  turnSmoothTime: 0.1
 --- !u!143 &68826115
 CharacterController:
   m_ObjectHideFlags: 0
@@ -627,7 +628,6 @@ GameObject:
   - component: {fileID: 1138408066}
   - component: {fileID: 1138408065}
   - component: {fileID: 1138408064}
-  - component: {fileID: 1138408067}
   m_Layer: 0
   m_Name: Object
   m_TagString: Untagged
@@ -708,19 +708,6 @@ Transform:
   - {fileID: 993924814}
   m_Father: {fileID: 68826112}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1138408067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1138408061}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22ed2e7f4e7d35442a9c70617099384a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  CharacterSpeed: 5
 --- !u!1 &1545010826
 GameObject:
   m_ObjectHideFlags: 0
