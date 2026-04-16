@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -10,10 +11,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float thrustForce = 1000.0f;
     [SerializeField] float rotationForce = 1000.0f;
     [SerializeField] AudioClip thrustSFX;
+    [SerializeField] ParticleSystem thrustVFX;
+    [SerializeField] ParticleSystem leftThrustVFX;
+    [SerializeField] ParticleSystem rightThrustVFX;
 
     Rigidbody rb;
     AudioSource rocketSFX;
-    CollisionHandler collisionHandler;
 
     private void OnEnable()
     {
@@ -25,7 +28,6 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rocketSFX = GetComponent<AudioSource>();
-        collisionHandler = GetComponent<CollisionHandler>();
     }
 
     // Update is called once per frame
@@ -44,18 +46,46 @@ public class PlayerMovement : MonoBehaviour
             {
                 rocketSFX.PlayOneShot(thrustSFX);
             }
+            if (thrustVFX.isPlaying == false)
+            {
+                thrustVFX.Play();
+            }
         }
         else
         {
             rocketSFX.Stop();
+            thrustVFX.Stop();
         }
     }
-
     void Rotating()
     {
         rb.freezeRotation = true;
         float inputRotationValue = inputRotation.ReadValue<float>();
+        thrustersVFXcontrol(inputRotationValue);
         transform.Rotate(Vector3.forward * inputRotationValue * rotationForce * Time.fixedDeltaTime);
         rb.freezeRotation = false;
     } 
+
+    void thrustersVFXcontrol(float inputRotationValue)
+    {
+        if (inputRotationValue > 0)
+        {
+            if (rightThrustVFX.isPlaying == false)
+            {
+                rightThrustVFX.Play();
+            }
+        }
+        else if (inputRotationValue < 0)
+        {
+            if (leftThrustVFX.isPlaying == false)
+            {
+                leftThrustVFX.Play();
+            }
+        }
+        else
+        {
+            leftThrustVFX.Stop();
+            rightThrustVFX.Stop();
+        }
+    }
 }
