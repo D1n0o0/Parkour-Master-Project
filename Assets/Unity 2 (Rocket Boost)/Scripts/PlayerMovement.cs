@@ -1,23 +1,19 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class PlayerMovement : MonoBehaviour
 {
-    Rigidbody rb;
-    
-    [HideInInspector]  AudioSource rocketSFX;
-
     public InputAction inputThrust;
     public InputAction inputRotation;
 
     [SerializeField] float thrustForce = 1000.0f;
     [SerializeField] float rotationForce = 1000.0f;
+    [SerializeField] AudioClip thrustSFX;
 
-    void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
-        rocketSFX = GetComponent<AudioSource>();
-    }
+    Rigidbody rb;
+    AudioSource rocketSFX;
+    CollisionHandler collisionHandler;
 
     private void OnEnable()
     {
@@ -25,17 +21,17 @@ public class PlayerMovement : MonoBehaviour
         inputRotation.Enable();
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
-        
+        rb = GetComponent<Rigidbody>();
+        rocketSFX = GetComponent<AudioSource>();
+        collisionHandler = GetComponent<CollisionHandler>();
     }
 
     // Update is called once per frame
     void Update()
     {
         Thrusting();
-
         Rotating();
     }
 
@@ -46,14 +42,13 @@ public class PlayerMovement : MonoBehaviour
             rb.AddRelativeForce(Vector3.up * thrustForce * Time.fixedDeltaTime);
             if (rocketSFX.isPlaying == false)
             {
-                rocketSFX.Play();
+                rocketSFX.PlayOneShot(thrustSFX);
             }
         }
         else
         {
             rocketSFX.Stop();
         }
-            
     }
 
     void Rotating()
@@ -62,8 +57,5 @@ public class PlayerMovement : MonoBehaviour
         float inputRotationValue = inputRotation.ReadValue<float>();
         transform.Rotate(Vector3.forward * inputRotationValue * rotationForce * Time.fixedDeltaTime);
         rb.freezeRotation = false;
-    }
-
-    
-     
+    } 
 }
