@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     public InputAction inputRotation;
 
     [SerializeField] float thrustForce = 1000.0f;
-    [SerializeField] float rotationForce = 1000.0f;
+    [SerializeField] float rotationForce = 40.0f;
     [SerializeField] AudioClip thrustSFX;
     [SerializeField] ParticleSystem thrustVFX;
     [SerializeField] ParticleSystem leftThrustVFX;
@@ -31,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         Thrusting();
         Rotating();
@@ -42,6 +42,8 @@ public class PlayerMovement : MonoBehaviour
         if (inputThrust.IsPressed())
         {
             rb.AddRelativeForce(Vector3.up * thrustForce * Time.fixedDeltaTime);
+
+            /* áp dụng SFX và VFX */
             if (rocketSFX.isPlaying == false)
             {
                 rocketSFX.PlayOneShot(thrustSFX);
@@ -53,6 +55,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
+            /* dừng áp dụng SFX và VFX */
             rocketSFX.Stop();
             thrustVFX.Stop();
         }
@@ -61,8 +64,11 @@ public class PlayerMovement : MonoBehaviour
     {
         rb.freezeRotation = true;
         float inputRotationValue = inputRotation.ReadValue<float>();
-        thrustersVFXcontrol(inputRotationValue);
         transform.Rotate(Vector3.forward * inputRotationValue * rotationForce * Time.fixedDeltaTime);
+
+        /* khi xoay thì SFX ở bộ đẩy 2 bên trái phải sẽ play() */
+        thrustersVFXcontrol(inputRotationValue);
+
         rb.freezeRotation = false;
     } 
 

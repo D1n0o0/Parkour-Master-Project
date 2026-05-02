@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 public class CollisionHandler : MonoBehaviour
@@ -16,6 +19,7 @@ public class CollisionHandler : MonoBehaviour
 
     bool playerWon;
     bool canPlayed;
+    bool canCollide = true;
 
     private void Awake()
     {
@@ -26,19 +30,22 @@ public class CollisionHandler : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
+    private void Update()
+    {
+        ChangeSceneToKey();
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
-        if (!canPlayed) { return; }
+        if (!canPlayed || !canCollide) {
+            return;
+        }
 
         switch (collision.gameObject.tag)
         {
             default:
                 playerWon = false;
-                ChangeSFX();
-                ChangeVFX();
-                CastOff();
-                ManageLevel();
-                canPlayed = false;
+                ChangeSceneToCollision(playerWon);
                 break;
 
             case "Friendly":
@@ -47,10 +54,7 @@ public class CollisionHandler : MonoBehaviour
 
             case "Finish":
                 playerWon = true;
-                ChangeSFX();
-                ChangeVFX();
-                ManageLevel();
-                canPlayed = false;
+                ChangeSceneToCollision(playerWon);
                 break;
         }
     }
@@ -87,14 +91,13 @@ public class CollisionHandler : MonoBehaviour
         Invoke("LoadLevel", changeSceneDelay);
     }
 
-    void CastOff()
+    void DestroyedCastOff()
     {
         rb.AddRelativeForce((Vector3.up - Vector3.right) * bounceBackForce * Time.deltaTime,ForceMode.Impulse);
     }
 
     void LoadLevel()
     {
-        
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;       
 
         if (playerWon)
@@ -108,6 +111,35 @@ public class CollisionHandler : MonoBehaviour
         }
         else { 
             SceneManager.LoadScene(currentSceneIndex);
+        }
+    }
+    void ChangeSceneToCollision(bool isWon)
+    {
+        if (isWon == false)
+        {
+            DestroyedCastOff();
+        }
+
+        ChangeSFX();
+        ChangeVFX();
+        ManageLevel();
+
+        canPlayed = false;
+    }
+
+    void ChangeSceneToKey()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+
+        if (Keyboard.current.lKey.wasPressedThisFrame)
+        {
+            playerWon = true;
+            LoadLevel();
+        }
+
+        else if(Keyboard.current.kKey.wasPressedThisFrame)
+        {
+            canCollide = false;
         }
     }
 }
